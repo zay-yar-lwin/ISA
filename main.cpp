@@ -1,6 +1,7 @@
 #include <iostream>
 #include "isa.hpp"
 #include <iomanip>
+#include <fstream>
 
 int main(){
 	double h;

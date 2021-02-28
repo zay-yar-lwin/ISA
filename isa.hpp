@@ -85,10 +85,12 @@ double geopotential_height( double geometric_height );
 
 double isa_temperature( double geometric_height );
 double isa_pressure( double geometric_height );
+double isa_density(double geometric_height);
+double isa_isothermal_temperature(Layer layer);
 double isa_isothermal_pressure( double geometric_height, Layer layer);
-double isa_gradient_pressure( double geometric_height, Layer layer);
-double isa_density( double geometric_height );
 double isa_isothermal_density(double geometric_height, Layer layer);
+double isa_gradient_temperature(double geometric_height, Layer layer);
+double isa_gradient_pressure( double geometric_height, Layer layer);
 double isa_gradient_density(double geometric_height, Layer layer);
 
 

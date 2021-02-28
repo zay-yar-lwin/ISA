@@ -22,77 +22,79 @@ double geopotential_height( double geometric_height ){
 }
 
 double isa_temperature( double geometric_height) {
-	double h = geopotential_height( geometric_height);
-	if ( h < Earth::Air::layer_one_end_height)
+	Layer layer = get_layer(geometric_height);
+
+	switch(layer)
 	{
-		// T = T1 + a(h - h1)
-		//std::cerr << "inside layer one";
-		return Earth::Air::layer_one_start_temperature +
-			(Earth::Air::lapse_rate_layer_one * 
-			( h - Earth::Air::layer_one_start_height ));
-	}
-	if ( h < Earth::Air::layer_two_start_height 
-		&& h > Earth::Air::layer_one_end_height)
-	{
-		//std::cerr << "Inside isothermal layer one ";
-		return Earth::Air::isothermal_layer_one_temperature;
-	}
-	if ( h < Earth::Air::layer_two_end_height
-		&& h > Earth::Air::layer_two_start_height)
-	{
-		return Earth::Air::layer_two_start_temperature +
-			(Earth::Air::lapse_rate_layer_two *
-			(h - Earth::Air::layer_two_start_height));
-	}
-	if( h > Earth::Air::layer_two_end_height
-		&& h < Earth::Air::layer_three_start_height)
-	{
-		return Earth::Air::isothermal_layer_two_temperature;
-	}
-	if ( h < Earth::Air::layer_three_end_height
-	&& h > Earth::Air::layer_three_start_height)
-	{
-		return Earth::Air::layer_three_start_temperature +
-		(Earth::Air::lapse_rate_layer_three *
-		( h - Earth::Air::layer_three_start_height));
-	}
-	if( h > Earth::Air::layer_three_end_height
-	&& h <  Earth::Air::layer_four_start_height)
-	{
-		return Earth::Air::isothermal_layer_three_temperature;
-	}
-	if( h < (Earth::Air::layer_four_end_height + 10)
-	&& h > Earth::Air::layer_four_start_height)
-	{
-		//std::cerr << "Inside gradient layer four " << h << std::endl;
-		return Earth::Air::layer_four_start_temperature +
-		(Earth::Air::lapse_rate_layer_four *
-		( h - Earth::Air::layer_four_start_height));
-	}
-	//std::cerr << "Before switch " << h << std::endl;
-	switch(static_cast<int>(h))
-	{
-		case Earth::Air::layer_one_start_height:
-			return Earth::Air::layer_one_start_temperature;
-		case Earth::Air::layer_one_end_height:
-			return Earth::Air::layer_one_end_temperature;
-		case Earth::Air::layer_two_start_height:
-			return Earth::Air::layer_two_start_temperature;
-		case Earth::Air::layer_two_end_height:
-			return Earth::Air::layer_two_end_temperature;
-		case Earth::Air::layer_three_start_height:
-			return Earth::Air::layer_three_start_temperature;
-		case Earth::Air::layer_three_end_height:
-			return Earth::Air::layer_three_end_temperature;
-		case Earth::Air::layer_four_start_height:
-			return Earth::Air::layer_four_start_temperature;
-		case Earth::Air::layer_four_end_height:
-			return Earth::Air::layer_four_end_temperature;
+		case Layer::isothermal_one:
+			return isa_isothermal_temperature(layer);
+		case Layer::isothermal_two:
+			return isa_isothermal_temperature(layer);
+		case Layer::isothermal_three:
+			return isa_isothermal_temperature(layer);
+		case Layer::gradient_one:
+			return isa_gradient_temperature(geometric_height, layer);
+		case Layer::gradient_two:
+			return isa_gradient_temperature(geometric_height, layer);
+		case Layer::gradient_three:
+			return isa_gradient_temperature(geometric_height, layer);
+		case Layer::gradient_four:
+			return isa_gradient_temperature(geometric_height, layer);
 		default:
-			error("Unable to calculate at such height ", std::to_string(h));
+			break;
+	}
+	return 0; //just for compiler warnings
+}
+
+double isa_isothermal_temperature(Layer layer){
+	switch(layer)
+	{
+		case Layer::isothermal_one:
+			return Earth::Air::isothermal_layer_one_temperature;
+		case Layer::isothermal_two:
+			return Earth::Air::isothermal_layer_two_temperature;
+		case Layer::isothermal_three:
+			return Earth::Air::isothermal_layer_three_temperature;
+		default:
+			break;
 	}
 
-	return 0; // program execution will never reached this statement. Just for suppressing the compiler warning
+	return 0; // Just for compiler warnings	
+}
+
+double isa_gradient_temperature(double geometric_height, Layer layer){
+	double T1;
+	double a;
+	double h = geopotential_height(geometric_height);
+	double h1;
+
+	switch(layer)
+	{
+		case Layer::gradient_one:
+			a = Earth::Air::lapse_rate_layer_one;
+			T1 = Earth::Air::layer_one_start_temperature;
+			h1 = Earth::Air::layer_one_start_height;
+			break;
+		case Layer::gradient_two:
+			a = Earth::Air::lapse_rate_layer_two;
+			T1 = Earth::Air::layer_two_start_temperature;
+			h1 = Earth::Air::layer_two_start_height;
+			break;
+		case Layer::gradient_three:
+			a = Earth::Air::lapse_rate_layer_three;
+			T1 = Earth::Air::layer_three_start_temperature;
+			h1 = Earth::Air::layer_three_start_height;
+			break;
+		case Layer::gradient_four:
+			a = Earth::Air::lapse_rate_layer_four;
+			T1 = Earth::Air::layer_four_start_temperature;
+			h1 = Earth::Air::layer_four_start_height;
+			break;
+		default:
+			break;
+	}
+
+	return T1 + ( a * (h - h1));
 }
 
 double isa_pressure(double geometric_height){
