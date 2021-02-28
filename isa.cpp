@@ -191,32 +191,33 @@ double isa_gradient_pressure(double geometric_height, Layer layer){
 Layer get_layer(double geometric_height){
 	double h = geopotential_height(geometric_height);
 	Layer layer;
+	int diff = 10;
 	using namespace Earth::Air;
 	if( h < (layer_one_end_height + 20))
 	{
 		layer = Layer::gradient_one;
 	}
-	else if( h > layer_one_end_height && h < (layer_two_start_height + 20))
+	else if( h > layer_one_end_height && h < (layer_two_start_height + diff))
 	{
 		layer = Layer::isothermal_one;
 	}
-	else if(h > layer_two_start_height && h < (layer_two_end_height + 20))
+	else if(h > layer_two_start_height && h < (layer_two_end_height + diff))
 	{
 		layer = Layer::gradient_two;
 	}
-	else if( h > layer_two_end_height && h < (layer_three_start_height + 20))
+	else if( h > layer_two_end_height && h < (layer_three_start_height + diff))
 	{
 		layer = Layer::isothermal_two;
 	}
-	else if( h > layer_three_start_height && h < ( layer_three_end_height + 20))
+	else if( h > layer_three_start_height && h < ( layer_three_end_height + diff))
 	{
 		layer = Layer::gradient_three;
 	}
-	else if(h > layer_three_end_height && h < ( layer_four_start_height + 20))
+	else if(h > layer_three_end_height && h < ( layer_four_start_height + diff))
 	{
 		layer = Layer::isothermal_three;
 	}
-	else if(h > layer_four_start_height && h < (layer_four_end_height + 20))
+	else if(h > layer_four_start_height && h < (layer_four_end_height + diff))
 	{
 		layer = Layer::gradient_four;
 	}
