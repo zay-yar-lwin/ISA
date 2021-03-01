@@ -39,11 +39,9 @@ void draw_table(){
 		out << height << seperator << geopotential_height(height) << seperator << isa_temperature(height) << seperator
 			<< isa_pressure(height) << seperator << isa_density(height) << std::endl;
 		height += interval;
-		if(static_cast<int>(height) == static_cast<int>(end_height))
+		if(static_cast<int>(height) > static_cast<int>(end_height))
 		{
 			break;
 		} 
 	}
-
-	out << std::setw(40) <<  "END" << std::endl;
 }
